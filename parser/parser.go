@@ -206,11 +206,14 @@ func (p *Parser) parseExpression(precedence int) ast.Expression {
 	leftExp := prefixFn()
 
 	/**
-	 * precedence is the "right-binding power", peekPrecedence is the "left-binding power"
-	 * if the "left-bidnding power is greater than the "right-binding" power, whatever has been
-	 * parsed thusfar gets pulled into the next operator (is passed into the infixParseFn of the next
-	 * operator).
-	 */
+	   * This for-loop checks if the operator/token should be left-associative, or right-associative...
+	   * in other words, if the token should belong to the left-arm or right-arm of the expression.
+		 * precedence is the "right-binding power", peekPrecedence is the "left-binding power".
+		 * If the "left-binding power is greater than the "right-binding" power, whatever has been
+		 * parsed thusfar gets pulled into the next operator (is passed into the infixParseFn of the next
+		 * operator). If right-binding power is stronger, whatever has been parsed will never be put into
+	   * the left arm it will always go into the right arm of the prefix expression.
+	*/
 	for !p.peekTokenIs(token.SEMICOLON) && precedence < p.peekPrecedence() {
 		infixFn := p.infixParseFns[p.peekToken.Type]
 		if infixFn == nil {
