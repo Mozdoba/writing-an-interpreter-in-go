@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/user"
-	"writing-an-interpreter-in-go/repl"
+	"waiig/repl"
 )
 
 func main() {

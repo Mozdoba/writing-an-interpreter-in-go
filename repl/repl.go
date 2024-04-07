@@ -4,15 +4,17 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"writing-an-interpreter-in-go/evaluator"
-	"writing-an-interpreter-in-go/lexer"
-	"writing-an-interpreter-in-go/parser"
+	"waiig/evaluator"
+	"waiig/lexer"
+	"waiig/object"
+	"waiig/parser"
 )
 
 const PROMPT = ">> "
 
 func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
+	env := object.NewEnvironment()
 
 	for {
 		fmt.Fprintf(out, PROMPT)
@@ -24,14 +26,14 @@ func Start(in io.Reader, out io.Writer) {
 		line := scanner.Text()
 		l := lexer.New(line)
 		p := parser.New(l)
-		program := p.ParseProgram()
 
+		program := p.ParseProgram()
 		if len(p.Errors()) != 0 {
 			printParserErrors(out, p.Errors())
 			continue
 		}
 
-		evaluated := evaluator.Eval(program)
+		evaluated := evaluator.Eval(program, env)
 		if evaluated != nil {
 			io.WriteString(out, evaluated.Inspect())
 			io.WriteString(out, "\n")
@@ -55,7 +57,7 @@ const MONKEY_FACE = `            __,__
 func printParserErrors(out io.Writer, errors []string) {
 	io.WriteString(out, MONKEY_FACE)
 	io.WriteString(out, "Woops! We ran into some monkey business here!\n")
-	io.WriteString(out, " parser errors :\n")
+	io.WriteString(out, " parser errors:\n")
 	for _, msg := range errors {
 		io.WriteString(out, "\t"+msg+"\n")
 	}

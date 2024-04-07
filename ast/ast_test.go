@@ -2,11 +2,10 @@ package ast
 
 import (
 	"testing"
-	"writing-an-interpreter-in-go/token"
+	"waiig/token"
 )
 
 func TestString(t *testing.T) {
-	// manually construct AST for "let myVar = anotherVar;"
 	program := &Program{
 		Statements: []Statement{
 			&LetStatement{
